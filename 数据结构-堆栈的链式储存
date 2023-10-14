@@ -6,13 +6,13 @@ struct node
 	char ch;
 	struct node*next;
 }
-struct generate_empty_stack()//创建空堆栈 
+struct node*generate_empty_stack()//创建空堆栈 
 {
 	struct node*headnode=(struct node*)malloc(sizeof(struct node));
 	headnode->next=NULL;
 	return headnode;
 }
-struct generate_stack_element(char ch)//创建储存新元素的结点 
+struct node*generate_stack_element(char ch)//创建储存新元素的结点 
 {
 	struct node*newnode=(struct node*)malloc(sizeof(struct node));
 	newnode->ch=ch;
