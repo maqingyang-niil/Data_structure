@@ -1,0 +1,44 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+struct node
+{
+	char ch;
+	struct node*next;
+}
+struct generate_empty_stack()//创建空堆栈 
+{
+	struct node*headnode=(struct node*)malloc(sizeof(struct node));
+	headnode->next=NULL;
+	return headnode;
+}
+struct generate_stack_element(char ch)//创建储存新元素的结点 
+{
+	struct node*newnode=(struct node*)malloc(sizeof(struct node));
+	newnode->ch=ch;
+	newnode->next=NULL;
+	return newnode;
+}
+void push_element(struct node*headnode,char ch)//将新元素压入堆栈
+{
+	struct node*newnode= generate_stack_element(char ch);
+	newnode->next=headnode->next;
+	headnext->next=newnode;
+}
+void if_empty(struct node*headnode)//判断是否为空 
+{
+	if (headnode->next==NULL)
+	return 1;
+	else
+	return 0;
+}
+char delete_and_return_top_element(struct node*headnode)//删除并返回栈顶元素
+{
+	char c;
+	struct node*posnode=(struct node*)malloc(sizeof(struct node));
+	posnode=headnode->next;
+	headnode->next=posnode->next;
+	c=posnode->ch;
+	free(posnode);
+	return c;
+} 
