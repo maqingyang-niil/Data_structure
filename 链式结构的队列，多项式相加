@@ -1,0 +1,131 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+struct node
+{
+	int coefficient;
+	int power;
+	struct node*next;
+};
+struct qnode//包含用于确定队列开始和结尾的两个指针 front and rear的结构变量 
+{
+	struct node*front;
+	struct node*rear;
+};
+typedef struct qnode * queue;
+struct node*generate_newnode(int coefficient,int power)//生成新的队列元素 
+{
+	struct node*newnode=(struct node*)malloc(sizeof(struct node));
+	newnode->coefficient=coefficient;
+	newnode->power=power;
+	newnode->next=NULL; 
+	return newnode;
+}
+void initiate_qnode(queue ptrq)//初始化队列头尾指针 
+{
+	ptrq->front=(struct node*)malloc(sizeof(struct node));
+	ptrq->rear=(struct node*)malloc(sizeof(struct node));
+	ptrq->front->next=NULL;
+	ptrq->rear->next=NULL;
+} 
+void attach_element(queue ptrq,int coefficient,int power)//从尾部加入新元素 
+{
+	struct node*newnode=generate_newnode(coefficient,power); 
+	if(ptrq->front->next==NULL)
+	{
+		ptrq->front->next=newnode;
+		ptrq->rear->next=newnode;
+	}
+	else
+	{
+		ptrq->rear->next->next=newnode;
+		ptrq->rear->next=newnode;
+	}
+}
+void delete_element(queue ptrq)//从头部删除元素
+{
+    struct node*posnode=(struct node*)malloc(sizeof(struct node));
+	if (ptrq->front->next==NULL)
+	{
+	    printf("空队列");	
+	}
+	else
+	{
+		posnode=ptrq->front->next;
+		ptrq->front->next=posnode->next;
+		free(posnode);
+	}
+}
+void addition_f(queue ptrq,queue ptrq1,queue ptrq_out)//两个二项式之和 
+{
+	struct node*pos;
+	struct node*pos1;
+	int coefficient;
+	int power;
+	pos=ptrq->front->next;
+	pos1=ptrq1->front->next;
+	while((pos->next!=NULL)&&(pos1->next!=NULL))
+	{
+		if(pos->power==pos1->power)
+		{
+			coefficient=pos->coefficient+pos1->coefficient;
+			power=pos->power;
+			attach_element(ptrq_out,coefficient,power);
+			pos=pos->next;
+			pos1=pos1->next;
+		}
+		else if(pos->power>pos1->power)
+		{
+			coefficient=pos->coefficient;
+			power=pos->power;
+			attach_element(ptrq_out,coefficient,power);
+			pos=pos->next;
+		}
+		else
+		{
+			coefficient=pos1->coefficient;
+			power=pos1->power;
+			attach_element(ptrq_out,coefficient,power);
+			pos1=pos1->next;
+		}
+	}
+}
+int main()
+{
+	queue ptrq;
+	initiate_qnode(ptrq);
+	int n;
+	printf("输入最大次幂数\n");
+	scanf("%d",&n);
+	int coefficient;
+	int power;
+	printf("幂从大到小依次写系数和幂数\n");
+	while(n>=0)
+	{
+		scanf("%d %d",&coefficient,&power);
+		attach_element(ptrq,coefficient,power);
+		n--;
+	}
+	queue ptrq1;
+	initiate_qnode(ptrq1);
+	printf("输入最大次幂数\n");
+	scanf("%d",&n);
+	printf("幂从大到小依次写系数和幂数\n");
+	while(n>=0)
+	{
+		scanf("%d %d",&coefficient,&power);
+		attach_element(ptrq1,coefficient,power);
+	}
+	queue ptrq_out;
+	initiate_qnode(ptrq_out);
+	addition_f(ptrq,ptrq1,ptrq_out);
+	struct node*index;
+	index=ptrq_out->front->next;
+	while(index->next!=NULL)
+	{
+		int coe;
+		int power;
+		printf("%dX^%d",index->coefficient,index->power);
+		index=index->next;
+	}
+}
