@@ -1,0 +1,128 @@
+#include<iostream>
+#include<string>
+#include"vector"
+#include"algorithm"
+#include"list"
+using namespace std;
+template<typename Object>
+class Vector
+{
+public:
+	explicit Vector(int initSize = 0) :theSize{ initSize }, theCapacity{ initSize + SPARE_CAPACITY }
+	{
+		object = new Object[theCapacity];
+	}
+	Vector(const Vector& rhs) :theSize{ rhs.theSize }, theCapacity{ rhs.theCapacity }, object{ nullptr }
+	{
+		object = new Object[theCapacity];
+		for (int k = 0; k < theSize; ++k)
+		{
+			object[k] = rhs.object[k];
+		}
+	}
+	~Vector()
+	{
+		delete[]object;
+	}
+	Vector& operator=(const Vector& rhs)
+	{
+		Vector copy = rhs;
+		swap(*this, copy);
+		return *this;
+	}
+	Vector(Vector&& rhs) :theSize{ rhs.theSize }, theCapacity{ rhs.theCapacity }, object{ rhs.object }
+	{
+		rhs.theCapacity = 0;
+		rhs.theSize = 0;
+		rhs.object = nullptr;
+	}
+	Vector operator=(Vector&& rhs)
+	{
+		swap(theSize, rhs.theSize);
+		swap(theCapacity, rhs.theCapacity);
+		swap(object, rhs.object);
+		return*this;
+	}
+	void reserve(int newCapacity)
+	{
+		if (newCapacity < theSize)
+			return;
+		Object newArray = new Object[newCapacity];
+		for (int k = 0; k < theSize; ++k)
+		{
+			newArray[k] = move(object[k]);
+		}
+		the capacity = newCapacity;
+		swap(*this, newArray);
+		delete[]newArray;
+	}
+	void resize(int newSize)
+	{
+		if (newSize > theCapacity)
+			reserve(newSize * 2);
+		theSize = newSize;
+	}
+	Object& operator[](int index)
+	{
+		return object[index];
+	}
+	const Object& operator[](int index)const
+	{
+		return object[index];
+	}
+	bool empty()
+	{
+		return size() == 0;
+	}
+	int size()const
+	{
+		return theSize;
+	}
+	int capacity()const
+	{
+		return theCapacity;
+	}
+	void push_back(const Object& x)
+	{
+		if (theSize == theCapacity)
+			reverse(2 * theCapaacity + 1);
+		object[theSize++] = x;
+	}
+	void push_back(Object&& x)
+	{
+		if (theSize == theCapacity)
+			reverse(2 * theCapaacity + 1);
+		object[theSize++] = move(x);
+	}
+	void pop_back()
+	{
+		--theSize;
+	}
+	const Object& back()const
+	{
+		return object[theSize - 1];
+	}
+	typedef Object* iterator;
+	typedef const Object* const_iterator;
+	iterator begin()
+	{
+		return &object[0];
+	}
+	const_iterator begin()const
+	{
+		return &object[0];
+	}
+	iterator end()
+	{
+		return &object[size()];
+	}
+	const_iterator end()const
+	{
+		return &object[size()];
+	}
+private:
+	int theSize;
+	int theCapacity;
+	Object* object;
+	const int SPARE_CAPACITY = 16;
+};
