@@ -8,11 +8,11 @@ template<typename Object>
 class Vector
 {
 public:
-	explicit Vector(int initSize = 0) :theSize{ initSize }, theCapacity{ initSize + SPARE_CAPACITY }
+	explicit Vector(int initSize = 0) :theSize{ initSize }, theCapacity{ initSize + SPARE_CAPACITY }//显式构造Vector构造函数
 	{
 		object = new Object[theCapacity];
 	}
-	Vector(const Vector& rhs) :theSize{ rhs.theSize }, theCapacity{ rhs.theCapacity }, object{ nullptr }
+	Vector(const Vector& rhs) :theSize{ rhs.theSize }, theCapacity{ rhs.theCapacity }, object{ nullptr }//拷贝构造函数
 	{
 		object = new Object[theCapacity];
 		for (int k = 0; k < theSize; ++k)
@@ -20,30 +20,30 @@ public:
 			object[k] = rhs.object[k];
 		}
 	}
-	~Vector()
+	~Vector()//析构函数
 	{
 		delete[]object;
 	}
-	Vector& operator=(const Vector& rhs)
+	Vector& operator=(const Vector& rhs)//重载=，实现非拷贝赋值
 	{
 		Vector copy = rhs;
 		swap(*this, copy);
 		return *this;
 	}
-	Vector(Vector&& rhs) :theSize{ rhs.theSize }, theCapacity{ rhs.theCapacity }, object{ rhs.object }
+	Vector(Vector&& rhs) :theSize{ rhs.theSize }, theCapacity{ rhs.theCapacity }, object{ rhs.object }//非拷贝赋值
 	{
 		rhs.theCapacity = 0;
 		rhs.theSize = 0;
 		rhs.object = nullptr;
 	}
-	Vector operator=(Vector&& rhs)
+	Vector& operator=(Vector&& rhs)//非拷贝赋值
 	{
 		swap(theSize, rhs.theSize);
 		swap(theCapacity, rhs.theCapacity);
 		swap(object, rhs.object);
 		return*this;
 	}
-	void reserve(int newCapacity)
+	void reserve(int newCapacity)//扩大空间
 	{
 		if (newCapacity < theSize)
 			return;
@@ -52,23 +52,63 @@ public:
 		{
 			newArray[k] = move(object[k]);
 		}
-		the capacity = newCapacity;
+		theCapacity = newCapacity;
 		swap(*this, newArray);
 		delete[]newArray;
 	}
-	void resize(int newSize)
+	void resize(int newSize)//扩大空间
 	{
 		if (newSize > theCapacity)
 			reserve(newSize * 2);
 		theSize = newSize;
 	}
-	Object& operator[](int index)
+	Object& operator[](int index)//重载[]运算符
+	{
+		if (index < 0 && index >= theSize)
+			return;
+		return object[index];
+	}
+	const Object& operator[](int index)const//重载[]运算符，返回值不可更改
 	{
 		return object[index];
 	}
-	const Object& operator[](int index)const
+	typedef Object* iterator;
+	typedef const Object* const_iterator;
+	iterator insert(iterator pos, const Object& x)//插入
 	{
-		return object[index];
+		if (theSize + 1 >= theCapacity)
+			reserve(theSize * 2);
+		int k = 0;
+		Object newArray1 = new Object[theSize + SPARE_CAPACITY];
+		for (iterator itr = object.begin(); itr != pos; ++itr,++k)
+		{
+			newArray1[k] = *itr;
+		}
+		newArray1[k + 1] = x;
+		for (iterator itr = pos; itr != object.end(); ++itr,++k)
+		{
+			newArray1[k + 2] = *itr;
+		}
+		swap(*this, newArray1);
+		delete[]newArray1;
+		iterator retn = pos;
+		return ++retn;
+	}
+	iterator erase(iterator pos)
+	{
+		Object newArray = new Object[theCapacity];
+		int k = 0;
+		for (iterator itr = object.begin(); itr != pos; ++itr,++k)
+		{
+			newArray[k] = *itr;
+		}
+		iterator insider=pos;
+		for (iterator itr = ++insider; itr != object.end(); ++itr,++k)
+		{
+			newArray[k + 1] = *itr;
+		}
+		iterator retn = pos;
+		return ++retn;
 	}
 	bool empty()
 	{
@@ -85,13 +125,13 @@ public:
 	void push_back(const Object& x)
 	{
 		if (theSize == theCapacity)
-			reverse(2 * theCapaacity + 1);
+			reserve(2 * theCapacity + 1);
 		object[theSize++] = x;
 	}
 	void push_back(Object&& x)
 	{
 		if (theSize == theCapacity)
-			reverse(2 * theCapaacity + 1);
+			reserve(2 * theCapacity + 1);
 		object[theSize++] = move(x);
 	}
 	void pop_back()
@@ -102,8 +142,6 @@ public:
 	{
 		return object[theSize - 1];
 	}
-	typedef Object* iterator;
-	typedef const Object* const_iterator;
 	iterator begin()
 	{
 		return &object[0];
