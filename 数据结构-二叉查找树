@@ -1,0 +1,114 @@
+#include<iostream>
+#include<string>
+#include"vector"
+#include"algorithm"
+#include"list"
+using namespace std;
+template <typename Comparable>
+class BinarySearchTree
+{
+private:
+	struct BinaryNode
+	{
+		Comparable elem;
+		BinaryNode* left;
+		BinaryNode* right;
+		BinaryNode(const Comparable& element, BinaryNode* lt, BinaryNode* rt) :elem{ element }, left{ lt }, right{ rt } {}
+	};
+public:
+	BinarySearchTree(const BinarySearchTree& rhs):root{nullptr}//拷贝构造
+	{
+		root = clone(rhs.root);
+	}
+	~BinarySearchTree()
+	{
+		makeEmpty();
+	}
+	bool contain(const Comparable& x);
+	void insert(const Comparable& x,BinaryNode*&t)//插入值，引用实现
+	{
+		if (t == nullptr)
+			t = new BinaryNode{ x,nullptr,nullptr };
+		else if (x < t->elem)
+			insert(x, t->left);
+		else if (x > t->elem)
+			insert(x, t->right);
+		else;
+	}
+	void insert(Comparable&& x, BinaryNode* t)//插入值，右值实现
+	{
+		if (t == nullptr)
+			t = new BinaryNode{ move(x),nullptr,nullptr };
+		else if (x < t->elem)
+			insert(move(x), t->left);
+		else if (x > t->elem)
+			insert(move(x), t->right);
+		else;
+	}
+private:
+	BinaryNode* root;
+	void remove(const Comparable& x, BinaryNode*& t)//删除结点
+	{
+		if (t == nullptr)
+			return;
+		if (x < t->elem)
+			remove(x, t->left);
+		else if (x > t->elem)
+			remove(x, t->right);
+		else if (t->left != nullptr && t->right != nullptr)//要删除的节点为拥有左右树（叶）的情况
+		{
+			t->elem = findMin(t->right)->elem;
+			remove(t->elem, t->right);
+		}
+		else
+		{
+			BinaryNode* oldNode = t;//要删除的节点只有一个子树（叶）的情况
+			t = (t->left != nullptr) ? t->left : t = right;
+			delete oldNode;
+		}
+	}
+	bool contain(const Comparable& x, BinaryNode* t)const//查找值
+	{
+		while (t != nullptr)
+		{
+			if (x < t->elem)
+				t = t->left;
+			else if (x > t->elem)
+				t = t->right;
+			else
+				return true;
+		}
+		return false;
+	}
+	BinaryNode* findMin(BinaryNode* t)const
+	{
+		if (t != nullptr)
+			while (t != nullptr)
+				t = t->left;
+		return t;
+	}
+	BinaryNode* findMax(BinaryNode* t)const
+	{
+		if (t != nullptr)
+			while (t != nullptr)
+				t = t->left;
+		return t;
+	}
+	BinaryNode* clone(BinaryNode* t)const//子树克隆方法
+	{
+		if (t == nullptr)
+			return nullptr;
+		else
+			return new BinaryNode{ t->elem,clone(t->left),clone(t->right) };
+	}
+	void makeEmpty(BinaryNode* t)
+	{
+		if (t != nullptr)
+		{
+			makeEmpty(t->left);
+			makeEmpty(t->right);
+			delete t;
+		}
+		t = nullptr;
+	}
+};
