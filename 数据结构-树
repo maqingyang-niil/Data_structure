@@ -1,0 +1,225 @@
+#include <utility>
+#include <memory>
+template<typename T,typename Y>
+class BinTree {
+public:
+    bool contains(const T &val) {
+        return contains(val, root);
+    }
+
+private:
+    struct BinNode {
+        T value;
+        BinNode *left;
+        BinNode *right;
+
+        BinNode(const T &val, const BinNode *lp, const BinNode *rp) : value(val), left(lp), right(rp) {}
+
+        BinNode(const T &&val, const BinNode *lp, const BinNode *rp) : value(std::move(val)), left(lp), right(rp) {}
+    };
+
+    struct AVLNode {
+        Y value;
+        AVLNode *left;
+        AVLNode *right;
+        int height;
+
+        AVLNode(const Y &val, const AVLNode *lp, const AVLNode *rp,const int &height) : value(val), left(lp), right(rp) ,height(height){}
+
+        AVLNode(const Y &&val, const AVLNode *lp, const AVLNode *rp,const int &&height) : value(std::move(val)), left(lp), right(rp) ,height(std::move(height)){}
+    };
+
+    int height(AVLNode *t) const {
+        return t == nullptr ? -1 : t->height;
+    }
+
+    void insert(const Y &val, AVLNode *t) {
+        if (t == nullptr)
+            t = new AVLNode(val, nullptr, nullptr);
+        else if (val < t->value)
+            insert(val, t->left);
+        else
+            insert(val, t->right);
+        balance(t);
+    }
+
+    const int ALLOWED_IMBALANCE = 1;
+
+    int max(int a, int b) {
+        return a > b ? a : b;
+    }
+
+    void balance(AVLNode *t) {
+        if (t == nullptr)
+            return;
+        if (height(t->left) - height(t->right) > ALLOWED_IMBALANCE) {
+            if (height(t->left->left) >= height(t->left->right))
+                rotateWithTheLeftChild(t);
+            else
+                doubleRotateWithTheLeftChild(t);
+        } else if (height(t->right) - height(t->left) > ALLOWED_IMBALANCE) {
+            if (height(t->right->right) >= height(t->right->left))
+                rotateWithTheRightChild(t);
+            else
+                doubleRotateWithTheRightChild(t);
+        }
+        t->height = max(height(t->left), height(t->right)) + 1;
+    }
+
+    void rotateWithTheLeftChild(AVLNode *&k2)
+    {
+        AVLNode*k1=k2->left;
+        k2->left=k1->right;
+        k1->right=k2;
+        k2->height=max(height(k2->left),height(k2->right))+1;
+        k1->height=max(height(k1->left),height(k1->right))+1;
+        k2=k1;
+    }
+    void rotateWithTheRightChild(AVLNode*&k2)
+    {
+        AVLNode*k1=k2->right;
+        k2->right=k1->left;
+        k1->left=k2;
+        k2->height=max(height(k2->left),height(k2->right))+1;
+        k1->height=max(height(k1->left),height(k1->right))+1;
+        k2=k1;
+    }
+    void doubleRotateWithTheLeftChild(AVLNode*&k3)
+    {
+        rotateWithTheRightChild(k3->left);
+        rotateWithTheLeftChild(k3);
+    }
+    void doubleRotateWithTheRightChild(AVLNode*&k3)
+    {
+        rotateWithTheLeftChild(k3->right);
+        rotateWithTheRightChild(k3);
+    }
+    void remove(const Y&x,AVLNode*&t)
+    {
+        if (t==nullptr)
+            return;
+        else if (x>t->value)
+            remove(x,t->right);
+        else if (x<t->value)
+            remove(x,t->left);
+        else if (t->left!=nullptr&&t->right!=nullptr)
+        {
+            t->value= findMin(t->right)->value;
+            remove(t->value,t->right);
+        }
+        else
+        {
+            AVLNode*oldNode=t;
+            t=(t->left!=nullptr)?t->left:t->right;
+            delete oldNode;
+        }
+        balance(t);
+    }
+    BinNode*root;
+    AVLNode*AVL_root;
+    bool contains(const T&val,const BinNode *t)const
+    {
+        if (t==nullptr)
+            return false;
+        else if (val<t->value)
+        {
+            return contains(val,t->left);
+        }
+        else if (val>t->value)
+        {
+            return contains(val,t->right);
+        }
+        else
+            return true;
+    }
+    void makeEmpty(BinNode*t)
+    {
+        if (t!=nullptr)
+        {
+            makeEmpty(t->left);
+            makeEmpty(t->right);
+            delete t;
+        }
+        t=nullptr;
+    }
+    BinNode*clone(BinNode*t)
+    {
+        if (t==nullptr)
+            return nullptr;
+        else
+            return new BinNode{t->value,clone(t->left),clone(t->right)};
+    }
+public:
+    BinTree(const BinTree&rhs):root{nullptr}
+    {
+        root=clone(rhs);
+    }
+    AVLNode*findMin(const AVLNode*t)const
+    {
+        if (t==nullptr)
+            return nullptr;
+        if (t->left==nullptr)
+            return t;
+        return findMin(t->left);
+    }
+    BinNode*findMin(const BinNode*t)const
+    {
+        if (t==nullptr)
+            return nullptr;
+        if (t->left==nullptr)
+            return t;
+        return findMin(t->left);
+    }
+    BinNode*findMax(const BinNode*t)const
+    {
+        if (t!=nullptr)
+            while(t->right!=nullptr)
+                t=t->right;
+        return t;
+    }
+    void remove(const T&x,BinNode*t)
+    {
+        if (t==nullptr)
+            return;
+        if (x<t->value)
+            remove(x,t->left);
+        else if (x>t->value)
+            remove(x,t->right);
+        else if (t->left!=nullptr&&t->right!=nullptr)
+        {
+            t->value=findMin(t->right)->value;
+            remove(x,t->right);
+        }
+        else
+        {
+            BinNode*oldNode=t;
+            t=(t->left!=nullptr)?t->left:t->right;
+            delete oldNode;
+        }
+    }
+
+    ~BinTree()
+    {
+        makeEmpty(root);
+    }
+    void insert(const T&val,BinNode*t)
+    {
+        if(t==nullptr)
+            t=new BinNode{val,nullptr,nullptr};
+        else if (val<t->value)
+            insert(val,t->left);
+        else if (val>t->value)
+            insert(val,t->right);
+        else;
+    }
+    void insert(const T&&val,BinNode*t)
+    {
+        if(t==nullptr)
+            t=new BinNode{std::move(val),nullptr,nullptr};
+        else if (val<t->value)
+            insert(val,t->left);
+        else if (val>t->value)
+            insert(val,t->right);
+        else;
+    }
+};
