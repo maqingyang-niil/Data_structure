@@ -1,0 +1,96 @@
+#include <vector>
+#include <utility>
+
+template<typename T>
+class BinaryHeap
+{
+public:
+    explicit BinaryHeap(int size=100):array(size){}
+    explicit BinaryHeap();
+    explicit BinaryHeap(const std::vector<T>&x):array(x.size()+10),currentSize(x.size())
+    {
+        for (int i=0;i<x.size();++i)
+            array[i+1]=x[i];
+        bulidHeap();
+    }
+    void insert(const T &x)
+    {
+        if (currentSize=array.size()-1)
+            array.resize(array.size()*2);
+        int hole=++currentSize;
+        T copy=x;
+        array[0]=std::move(copy);
+        for (;x<array[hole/2];hole/=2)
+            array[hole]=std::move(array[hole/2]);
+        array[hole]=std::move(array[0]);
+    }
+    void decreeseKey(int pos,int delt)
+    {
+        array[pos]=array[pos]-delt;
+        T tmp=array[pos];
+        int hole=pos;
+        for (;tmp<array[hole];hole/=2)
+            array[hole]=std::move(array[hole/2]);
+        array[hole]=std::move(tmp);
+    }
+    void increaseKey(int pos,int delt)
+    {
+        array[pos]=array[pos]+delt;
+        T tmp=array[pos];
+        int hole=pos;
+        int child=hole;
+        for(;hole*2<currentSize;hole=child)
+        {
+            child=2*hole;
+            if (child!=currentSize&&array[child+1]<array[child])
+                ++child;
+            if (array[child]<tmp)
+                array[hole]=array[child];
+            else
+                break;
+        }
+        array[hole]=tmp;
+    }
+private:
+    int currentSize;
+    std::vector<T> array;
+    void bulidHeap()
+    {
+        for (int i=currentSize/2;i>0;--i)
+            percolateDown(i);
+    }
+    bool isEmpty()
+    {
+        return array.empty();
+    }
+    void deleteMin()
+    {
+        if (isEmpty())
+            throw UnderflowException{};
+        array[1]=std::move(array[currentSize--]);
+        percolateDown(1);
+    }
+    void percolateUp(const T&x)
+    {
+        int hole=++currentSize;
+        for (;x<array[hole];hole/=2)
+            array[hole]=std::move(array[hole/2]);
+        array[hole]=std::move(x);
+    }
+    void percolateDown(int hole)
+    {
+        int child=hole;
+        T tmp=std::move(array[hole]);
+        for (;hole*2<currentSize;hole=child)
+        {
+            child=hole*2;
+            if (child!=currentSize&&array[child+1]<array[child])
+                ++child;
+            if (array[child]<tmp)
+                array[hole]=std::move(array[child]);
+            else
+                break;
+        }
+        array[hole]=std::move(tmp);
+    }
+};
