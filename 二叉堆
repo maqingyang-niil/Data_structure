@@ -94,3 +94,29 @@ private:
         array[hole]=std::move(tmp);
     }
 };
+//算法6A
+template<typename T>
+T algrithm_6A(const std::vector<T>&x,int k,BinaryHeap<T> tmp)
+{
+    tmp(x);
+    for (int i=k;i>0;--i)
+        tmp.deleteMin();
+    return tmp.accessMin();
+}
+//算法6B
+template<typename T>
+T algrithm_6B(const std::vector<T>&x,int k,BinaryHeap<T> tmp)
+{
+    std::vector<T> newVector(x.begin(),x.begin()+k);
+    tmp(newVector);
+    int buf=tmp.deleteMin();
+    for (int i=k+1;i<x.size();++i)
+    {
+        if (x[i]>tmp.accessMin())
+        {
+            tmp.deleteMin();
+            tmp.insert(x[i]);
+        }
+    }
+    return tmp.accessMin();
+}
