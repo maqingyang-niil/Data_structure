@@ -74,3 +74,84 @@ void heapsort(std::vector<T>&a)
         percDown(a,0,j);
     }
 }
+//归并排序
+/*
+ * 驱动函数
+ */
+template<typename T>
+void mergeSort(std::vector<T>&a)
+{
+    std::vector<T> tmp(a.size());
+    mergeSort(a,tmp,0,a.size()-1);
+}
+template<typename T>
+void merge(std::vector<T>&a,std::vector<T>&tmp,int leftpos,int rightpos,int rightend)
+{
+    int leftend=rightpos-1;
+    int tmppos=leftpos;
+    int numElement=rightend-leftpos+1;
+    while(leftpos<=leftend&&rightpos<=rightend)
+    {
+        if (a[leftpos]<=a[rightpos])
+            tmp[tmppos++]=std::move(a[leftpos++]);
+        else
+            tmp[tmppos++]=std::move(a[rightpos++]);
+    }
+    while(leftpos<=leftend)
+        tmp[tmppos++]=std::move(a[leftpos++]);
+    while(rightpos<=rightend)
+        tmp[tmppos++]=std::move(a[rightpos++]);
+    for(int i=0;i<numElement;++i,--rightend)
+        a[rightend]=std::move(tmp[rightend]);
+}
+template<typename T>
+void mergeSort(std::vector<T> &a,std::vector<T>&tmp,int left,int right)
+{
+    if (left<right)
+    {
+        int center=(left+right)/2;
+        mergeSort(a,tmp,left,center);
+        mergeSort(a,tmp,center+1,right);
+        merge(a,tmp,left,center+1,right);
+    }
+}
+//快速排序
+/*
+ * 驱动函数
+ */
+template<typename T>
+void quickSort(std::vector<T>&a)
+{
+
+}
+template<typename T>
+const T&median3(std::vector<T>&a,int left,int right)
+{
+    int center=(left+right)/2;
+    if(a[center]<a[left])
+        std::swap(a[left],a[center]);
+    if(a[right]<a[left])
+        std::swap(a[left],a[right]);
+    if(a[right]<a[center])
+        std::swap(a[center],a[right]);
+    std::swap(a[center],a[right-1]);
+    return a[right-1];
+}
+template<typename T>
+void quickSort(std::vector<T>&a,int left,int right)
+{
+    const T&pivot= median3(a,left,right);
+    int i=left,j=right-1;
+    for (;;)
+    {
+        while(a[++i]<pivot){}
+        while(a[--j]>pivot){}
+        if (i<j)
+            std::swap(a[i],a[j]);
+        else
+            break;
+    }
+    std::swap(a[i],a[right-1]);
+    quickSort(a,left,i-1);
+    quickSort(a,i+1,right);
+}
