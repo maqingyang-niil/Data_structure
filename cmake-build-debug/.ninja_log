@@ -1,3 +1,20 @@
 # ninja log v5
 212	1723	7583556146375734	CMakeFiles/data_structure.dir/Binary_heap.cpp.obj	c6a328e28e5c1ce
 5	1727	7583556146396690	CMakeFiles/data_structure.dir/main.cpp.obj	5d045ac4cf58247c
+7	466	7586975916190043	CMakeFiles/data_structure.dir/Leftist_heap.cpp.obj	9ba7e4f77f56c89f
+7	648	7586978410016938	CMakeFiles/data_structure.dir/disjoint_set.cpp.obj	83c6259a2ff752e7
+14	471	7586975916255221	CMakeFiles/data_structure.dir/map.cpp.obj	a8e524ab54995033
+649	842	7586978411925447	data_structure.exe	157f36c4050a6627
+6	657	7586980430301349	CMakeFiles/data_structure.dir/disjoint_set.cpp.obj	83c6259a2ff752e7
+14	728	7586980430996264	CMakeFiles/data_structure.dir/test.cpp.obj	cdc40028a96e1031
+729	906	7586980432732606	data_structure.exe	2871abc3aff515b4
+6	664	7586980696427728	CMakeFiles/data_structure.dir/test.cpp.obj	cdc40028a96e1031
+665	835	7586980698085692	data_structure.exe	2871abc3aff515b4
+8	649	7586981285607292	CMakeFiles/data_structure.dir/test.cpp.obj	cdc40028a96e1031
+650	820	7586981287251636	data_structure.exe	2871abc3aff515b4
+7	663	7586981486308633	CMakeFiles/data_structure.dir/test.cpp.obj	cdc40028a96e1031
+664	831	7586981487937444	data_structure.exe	2871abc3aff515b4
+9	661	7586981579666908	CMakeFiles/data_structure.dir/test.cpp.obj	cdc40028a96e1031
+662	820	7586981581212828	data_structure.exe	2871abc3aff515b4
+8	680	7586982412341811	CMakeFiles/data_structure.dir/test.cpp.obj	cdc40028a96e1031
+680	842	7586982413904682	data_structure.exe	2871abc3aff515b4

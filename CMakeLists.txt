@@ -6,4 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(data_structure main.cpp
         Binary_heap.cpp
         Leftist_heap.cpp
+        map.cpp
+        disjoint_set.cpp
+        test.cpp
 )
