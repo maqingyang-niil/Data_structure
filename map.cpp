@@ -21,7 +21,6 @@ private:
     int edge_num;
 public:
     explicit adjacency_list_map(adjacency_list_map&item);
-    explicit adjacency_list_map(int capacity=100);
     void Kruskal_no_orient();
     void breadth_first_search(int pos);
     void Dijkstra(int pos);

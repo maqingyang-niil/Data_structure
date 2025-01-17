@@ -9,4 +9,5 @@ add_executable(data_structure main.cpp
         map.cpp
         disjoint_set.cpp
         test.cpp
+        adjacent_matrix_map.cpp
 )
