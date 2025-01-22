@@ -4,6 +4,8 @@
 #include <vector>
 #include <climits>
 #include <queue>
+#include "disjoint_set.cpp"
+#include <algorithm>
 class adjacent_matrix_map
 {
 private:
@@ -15,7 +17,76 @@ public:
     explicit adjacent_matrix_map(const adjacent_matrix_map &item);
     void breadth_first_search(int pos);
     void Dijkstra(int pos);
+    void Kruskal();
+    void Prim(int pos);
 };
+
+void adjacent_matrix_map::Prim(int pos){
+    std::vector<bool> selected(vertex_num,false);
+    std::vector<int> parents(vertex_num,-1);
+    std::vector<int> distance(vertex_num,INT_MAX);
+    selected[pos]=true;
+    distance[pos]=0;
+    int nonselected=vertex_num-1;
+    while(nonselected)
+    {
+        int min_distance=INT_MAX;
+        int min_dis_index=-1;
+        for (int i=0;i<vertex_num;++i)
+        {
+            if (selected[i]=true)
+            {
+                for (int j=0;j<vertex_num;++j)
+                {
+                    if (matrix[i][j]!=INT_MAX)
+                    {
+                        if (min_distance>matrix[i][j])
+                        {
+                            min_distance=matrix[i][j];
+                            min_dis_index=j;
+                            parents[j]=i;
+                        }
+                    }
+                }
+            }
+        }
+        if (min_dis_index=-1)
+            break;
+        selected[min_dis_index]=true;
+        distance[min_dis_index]=min_distance;
+
+    }
+}
+
+void adjacent_matrix_map::Kruskal(){
+    DisjointSet ds(vertex_num);
+    std::vector<std::pair<int,std::pair<int,int>>> edges;
+    for (int i=0;i<vertex_num;++i)
+    {
+        for (int j=0;j<vertex_num;++j)
+        {
+            if (i<j&&matrix[i][j]<INT_MAX)
+            {
+                edges.push_back({i,{j,matrix[i][j]}});
+            }
+        }
+    }
+    std::sort(edges.begin(),edges.end());
+    std::vector<std::pair<int,int>> mst;
+    for (const auto edge:edges)
+    {
+        int weight=edge.second.second;
+        int u=edge.first;
+        int v=edge.second.first;
+        int set_u=ds.find(u);
+        int set_v=ds.find(v);
+        if (set_u!=set_v)
+        {
+            mst.push_back({u,v});
+            ds.union_set_by_height(set_u,set_v);
+        }
+    }
+}
 
 void adjacent_matrix_map::breadth_first_search(int pos){
     std::vector<bool> visited(vertex_num,false);
